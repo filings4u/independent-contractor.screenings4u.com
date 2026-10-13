@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en" class="s4u-auth-pending">
+<head><meta name="robots" content="noindex,nofollow,noarchive,nosnippet"><meta name="googlebot" content="noindex,nofollow,noarchive,nosnippet">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#102f55"><link rel="icon" type="image/png" href="/images/fav.png">
+  <title>System Status | screenings4u</title>
+  <link rel="icon" href="images/logo.png">
+  <style>
+    :root{--navy:#102f55;--blue:#24467f;--orange:#ef6c00;--ink:#183653;--muted:#6d7f92;--line:#dce5ef;--soft:#f4f7fb;--good:#17764a;--warn:#a86106;--bad:#a72d2d}
+    *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#eef3f8;color:var(--ink)}a{color:inherit;text-decoration:none}
+    .top{height:72px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:10}.top img{width:154px;max-height:44px;object-fit:contain}.top a{border:1px solid var(--line);border-radius:9px;padding:9px 12px;font-size:10px;font-weight:800;color:var(--blue);background:#fff}
+    .wrap{max-width:1120px;margin:0 auto;padding:30px 20px 54px}.hero{background:linear-gradient(120deg,#0f315b,#184f80 72%,#24467f);color:#fff;border-radius:18px;padding:32px;position:relative;overflow:hidden}.hero:after{content:"";position:absolute;right:-48px;bottom:-110px;width:280px;height:280px;border:42px solid rgba(239,108,0,.18);border-radius:50%}.hero small{color:#ffc28e;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.12em}.hero h1{font-size:34px;margin:7px 0 8px}.hero p{margin:0;color:#dce9f7;line-height:1.6;font-size:13px}.overall{margin-top:18px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;align-items:center;gap:14px}.overall-dot{width:15px;height:15px;border-radius:50%;background:#1f9d61;box-shadow:0 0 0 6px rgba(31,157,97,.12)}.overall h2{font-size:17px;margin:0;color:var(--navy)}.overall p{margin:4px 0 0;color:var(--muted);font-size:11px}.checked{margin-left:auto;color:var(--muted);font-size:10px}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:18px}.component{background:#fff;border:1px solid var(--line);border-radius:12px;padding:15px 16px;display:flex;justify-content:space-between;gap:16px;align-items:center}.component strong{display:block;color:var(--navy);font-size:12px}.component span.desc{display:block;color:var(--muted);font-size:10px;margin-top:4px;line-height:1.45}.state{white-space:nowrap;border-radius:999px;padding:6px 8px;font-size:9px;font-weight:900;background:#e8f6ee;color:var(--good)}.state.degraded_performance,.state.maintenance{background:#fff3dd;color:var(--warn)}.state.partial_outage,.state.major_outage{background:#fdeaea;color:var(--bad)}
+    .section{margin-top:22px}.section h2{font-size:16px;color:var(--navy);margin:0 0 10px}.incident{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;margin-top:10px}.incident-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.incident h3{font-size:13px;color:var(--navy);margin:0}.incident p{font-size:10.5px;color:var(--muted);line-height:1.55}.incident-meta{font-size:9px;color:#8494a6}.updates{border-top:1px solid #edf1f5;margin-top:12px;padding-top:11px}.update{padding:8px 0}.update strong{font-size:9.5px;color:var(--ink)}.update span{font-size:9px;color:var(--muted);margin-left:6px}.empty{background:#fff;border:1px solid var(--line);border-radius:12px;padding:26px;text-align:center;color:var(--muted);font-size:11px}.footer{text-align:center;color:var(--muted);font-size:9.5px;padding-top:28px}
+    @media(max-width:700px){.top{padding:0 14px}.top img{width:132px}.wrap{padding:18px 12px 38px}.hero{padding:24px 20px}.hero h1{font-size:28px}.overall{align-items:flex-start}.checked{margin-left:0}.grid{grid-template-columns:1fr}.incident-head{display:block}.state{display:inline-block;margin-top:8px}}
+  </style>
+<script src="/assets/js/dialogs.js?v=20261001-ctpa-fast20"></script><script src="/assets/js/config.js?v=20261001-ctpa-fast20"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/assets/js/session-security.js?v=20261001-ctpa-fast20"></script></head>
+<body>
+  <header class="top"><img src="images/logo.png" alt="screenings4u"><a href="/support.html">Support</a></header>
+  <main class="wrap">
+    <section class="hero"><small>screenings4u</small><h1>System Status</h1><p>Live service health, active incidents, scheduled maintenance, and recent resolutions.</p></section>
+    <section class="overall" id="overall"><span class="overall-dot" id="overallDot"></span><div><h2 id="overallTitle">Checking system status…</h2><p id="overallText">Loading the latest service health information.</p></div><div class="checked" id="checked"></div></section>
+    <section class="section"><h2>Services</h2><div class="grid" id="components"><div class="empty">Loading services…</div></div></section>
+    <section class="section"><h2>Active Incidents</h2><div id="activeIncidents"><div class="empty">Checking for active incidents…</div></div></section>
+    <section class="section"><h2>Scheduled Maintenance</h2><div id="maintenance"><div class="empty">Checking maintenance schedule…</div></div></section>
+    <section class="section"><h2>Recent Incidents</h2><div id="recentIncidents"><div class="empty">Loading recent incident history…</div></div></section>
+    <div class="footer">Status information refreshes automatically every 60 seconds.</div>
+  </main>
+  
+  <script>
+    const SUPABASE_URL='https://elpbnytpciqnbexiaebp.supabase.co';
+    const SUPABASE_KEY='sb_publishable_xVI6Mjkk1bNVMGHZCPuK6w_8FSHKdkC';
+    const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:false}});
+    const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const label=v=>String(v||'operational').replaceAll('_',' ').replace(/\b\w/g,m=>m.toUpperCase());
+    const time=v=>v?new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}).format(new Date(v)):'—';
+    function overallStatus(components,incidents){const active=incidents.filter(i=>i.status!=='resolved'&&i.status!=='scheduled');if(active.some(i=>i.impact==='critical'))return'major_outage';if(active.some(i=>i.impact==='major'))return'partial_outage';if(active.some(i=>i.impact==='minor'))return'degraded_performance';const rank={operational:0,maintenance:1,degraded_performance:2,partial_outage:3,major_outage:4};return components.reduce((w,c)=>(rank[c.status]||0)>(rank[w]||0)?c.status:w,'operational')}
+    function statusCopy(s){return {operational:['All Systems Operational','All monitored screenings4u services are operating normally.'],maintenance:['Maintenance In Progress','One or more services are undergoing scheduled maintenance.'],degraded_performance:['Degraded Performance','Some services are experiencing slower or limited performance.'],partial_outage:['Partial System Outage','Some screenings4u services are currently unavailable.'],major_outage:['Major System Outage','Multiple services are currently unavailable.']}[s]||['System Status','Current service information is shown below.']}
+    function incidentHtml(i,updates){return `<article class="incident"><div class="incident-head"><div><h3>${esc(i.title)}</h3><div class="incident-meta">${esc(label(i.status))} · ${esc(time(i.starts_at))}</div></div><span class="state ${esc(i.impact==='critical'?'major_outage':i.impact==='major'?'partial_outage':i.impact==='minor'?'degraded_performance':i.impact==='maintenance'?'maintenance':'operational')}">${esc(label(i.impact))}</span></div><p>${esc(i.message)}</p>${updates.length?`<div class="updates">${updates.map(u=>`<div class="update"><strong>${esc(label(u.status))}</strong><span>${esc(time(u.created_at))}</span><p>${esc(u.message)}</p></div>`).join('')}</div>`:''}</article>`}
+    async function load(){
+      try{
+        const [cr,ir]=await Promise.all([db.from('system_status_components').select('*').eq('is_public',true).order('sort_order'),db.from('system_status_incidents').select('*').eq('is_public',true).order('starts_at',{ascending:false}).limit(20)]);
+        if(cr.error)throw cr.error;if(ir.error)throw ir.error;const components=cr.data||[],incidents=ir.data||[];const ids=incidents.map(i=>i.id);let updates=[];
+        if(ids.length){const ur=await db.from('system_status_incident_updates').select('*').in('incident_id',ids).order('created_at',{ascending:false});if(ur.error)throw ur.error;updates=ur.data||[]}
+        const by={};for(const u of updates)(by[u.incident_id]??=[]).push(u);
+        const overall=overallStatus(components,incidents),copy=statusCopy(overall);document.getElementById('overallTitle').textContent=copy[0];document.getElementById('overallText').textContent=copy[1];document.getElementById('checked').textContent='Updated '+time(new Date().toISOString());document.getElementById('overallDot').style.background=overall==='operational'?'#1f9d61':overall==='degraded_performance'||overall==='maintenance'?'#d79020':'#c43d3d';
+        document.getElementById('components').innerHTML=components.length?components.map(c=>`<div class="component"><div><strong>${esc(c.name)}</strong><span class="desc">${esc(c.description||'')}</span></div><span class="state ${esc(c.status)}">${esc(label(c.status))}</span></div>`).join(''):'<div class="empty">No public services are configured.</div>';
+        const active=incidents.filter(i=>i.status!=='resolved'&&i.status!=='scheduled'),maint=incidents.filter(i=>i.status==='scheduled'),recent=incidents.filter(i=>i.status==='resolved').slice(0,10);
+        document.getElementById('activeIncidents').innerHTML=active.length?active.map(i=>incidentHtml(i,by[i.id]||[])).join(''):'<div class="empty">No active incidents reported.</div>';
+        document.getElementById('maintenance').innerHTML=maint.length?maint.map(i=>incidentHtml(i,by[i.id]||[])).join(''):'<div class="empty">No scheduled maintenance announced.</div>';
+        document.getElementById('recentIncidents').innerHTML=recent.length?recent.map(i=>incidentHtml(i,by[i.id]||[])).join(''):'<div class="empty">No recent incidents to display.</div>';
+      }catch(e){document.getElementById('overallTitle').textContent='Status unavailable';document.getElementById('overallText').textContent='We could not load live status data. Please check again shortly.';document.getElementById('components').innerHTML='<div class="empty">Status data is temporarily unavailable.</div>';document.getElementById('activeIncidents').innerHTML='';document.getElementById('maintenance').innerHTML='';document.getElementById('recentIncidents').innerHTML='';}
+    }
+    load();setInterval(load,60000);
+  </script>
+<script src="/assets/js/validation.js?v=20261001-ctpa-fast20"></script>
+</body>
+</html>

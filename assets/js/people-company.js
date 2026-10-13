@@ -1,0 +1,21 @@
+(()=>{'use strict';
+const $=(s,r=document)=>r.querySelector(s),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const qs=k=>new URLSearchParams(location.search).get(k)||'';
+const pretty=v=>String(v??'—').replaceAll('_',' ').replace(/\b\w/g,x=>x.toUpperCase());
+const statusClass=v=>/active|eligible/i.test(String(v))?'good':/inactive|terminated|archived|suspended/i.test(String(v))?'bad':'warn';
+const badge=v=>`<span class="badge ${statusClass(v)}">${esc(pretty(v))}</span>`;
+const name=p=>[p.first_name,p.middle_name,p.last_name].filter(Boolean).join(' ')||p.display_name||'Unnamed person';
+function render(d){
+  const id=qs('id'),employer=(d.employers||[]).find(e=>String(e.id)===String(id));
+  if(!employer)return `<div class="panel"><div class="empty">Employer was not found in this C/TPA account.</div></div>`;
+  const people=(d.employees||[]).filter(p=>String(p.employer_id)===String(id)&&!p.archived_at);
+  return `<section class="panel"><div class="panel-head"><div><h2>${esc(employer.legal_name||employer.dba_name||'Employer')} — People</h2><p>Employees, drivers, staff, and contractors assigned to this Employer.</p></div><div style="display:flex;gap:8px"><a class="btn secondary" href="/people.html">Back to Employers</a><a class="btn primary" href="/people-form.html?employer_id=${encodeURIComponent(id)}">Add Person</a></div></div>
+    <div class="people-toolbar"><input id="companyPeopleSearch" type="search" placeholder="Search name, ID, title, CDL, email..."><select id="companyPeopleType"><option value="">All Types</option><option value="employee">Employees</option><option value="driver">Drivers</option><option value="staff">Staff</option><option value="contractor">Contractors</option></select><select id="companyPeopleStatus"><option value="">All Statuses</option><option value="active">Active</option><option value="pending_enrollment">Pending Enrollment</option><option value="inactive">Inactive</option></select><span class="badge" id="companyPeopleCount">${people.length} ${people.length===1?'person':'people'}</span></div>
+    <div class="table-wrap"><table><thead><tr><th>Name</th><th>Type</th><th>ID / CDL</th><th>Position</th><th>DOT</th><th>Status</th><th></th></tr></thead><tbody id="companyPeopleRows"></tbody></table></div></section>`;
+}
+function bind(d){
+  const id=qs('id'),all=(d.employees||[]).filter(p=>String(p.employer_id)===String(id)&&!p.archived_at);
+  const draw=()=>{const q=String($('#companyPeopleSearch')?.value||'').trim().toLowerCase(),type=$('#companyPeopleType')?.value||'',status=$('#companyPeopleStatus')?.value||'';const rows=all.filter(p=>{const hay=[name(p),p.employee_number,p.job_title,p.cdl_number,p.cdl_state,p.email,p.mobile,p.dot_agency].filter(Boolean).join(' ').toLowerCase();return(!q||hay.includes(q))&&(!type||String(p.workforce_worker_type||'employee')===type)&&(!status||String(p.employment_status||'')===status)}).sort((a,b)=>name(a).localeCompare(name(b)));if($('#companyPeopleCount'))$('#companyPeopleCount').textContent=`${rows.length} ${rows.length===1?'person':'people'}`;$('#companyPeopleRows').innerHTML=rows.map(p=>{const dot=p.dot_covered===true?`${esc(p.dot_agency||'DOT')} · ${p.safety_sensitive===true?'Safety-sensitive':'Not safety-sensitive'}`:'Not DOT-covered';const ident=[p.employee_number?`#${p.employee_number}`:'',p.cdl_number?`CDL ${p.cdl_number}${p.cdl_state?` (${p.cdl_state})`:''}`:''].filter(Boolean).join(' · ')||'—';return `<tr><td><strong>${esc(name(p))}</strong><small>${esc(p.email||p.mobile||'')}</small></td><td>${badge(p.workforce_worker_type||'employee')}</td><td>${esc(ident)}</td><td>${esc(p.job_title||'—')}</td><td>${dot}</td><td>${badge(p.employment_status||'active')}</td><td><a class="mini-btn" href="/people-form.html?id=${encodeURIComponent(p.id)}&employer_id=${encodeURIComponent(id)}">Manage</a></td></tr>`}).join('')||`<tr><td colspan="7"><div class="empty">No people have been added for this Employer yet.</div></td></tr>`};['companyPeopleSearch','companyPeopleType','companyPeopleStatus'].forEach(x=>$('#'+x)?.addEventListener(x==='companyPeopleSearch'?'input':'change',draw));draw();
+}
+window.CtpaPeopleCompany={render,bind};
+})();

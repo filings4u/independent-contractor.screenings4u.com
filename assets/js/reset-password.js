@@ -1,0 +1,6 @@
+(()=>{'use strict';
+const sb=window.S4UGetSupabaseClient(),form=document.getElementById('resetForm'),status=document.getElementById('status'),submit=document.getElementById('resetSubmit');
+const set=(m,b=false)=>{status.textContent=m||'';status.style.color=b?'#a72d2d':'#17764a'};
+async function ensureRecovery(){for(let i=0;i<40;i++){const {data:{session}}=await sb.auth.getSession();if(session)return true;await new Promise(r=>setTimeout(r,100))}set('This password reset link is invalid or has expired. Request a new reset email.',true);submit.disabled=true;return false}
+form.onsubmit=async e=>{e.preventDefault();const f=new FormData(form),p=String(f.get('password')||''),c=String(f.get('confirm_password')||'');if(p.length<12)return set('Use at least 12 characters for your new password.',true);if(p!==c)return set('Passwords do not match.',true);submit.disabled=true;set('Updating password…');if(!await ensureRecovery())return;const {error}=await sb.auth.updateUser({password:p});if(error){set(error.message,true);submit.disabled=false;return}await sb.auth.signOut();set('Password updated. Redirecting to sign in…');setTimeout(()=>location.replace('/login.html?reason=password-updated'),900)};ensureRecovery();
+})();
