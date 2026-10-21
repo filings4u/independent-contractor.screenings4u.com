@@ -1395,3 +1395,26 @@ body[data-portal-page="staff-form"] .form-actions,body[data-portal-page="staff-v
 
 /* Functional IC portal forms and submission history */
 .ic-data-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;margin:22px 0;padding:22px;border:1px solid #d9e4f0;border-radius:12px;background:#fff}.ic-data-form h3,.ic-data-form button,.ic-data-form #icStatus{grid-column:1/-1}.ic-data-field{display:grid;gap:7px;font-size:13px;font-weight:650;color:#17365f}.ic-data-field input,.ic-data-field select,.ic-data-field textarea{box-sizing:border-box;min-width:0;width:100%;padding:12px;border-radius:8px;border:1px solid #ccdaeb;background:white;color:#17365f}.ic-data-field textarea{resize:vertical;min-height:110px}.ic-data-form #icStatus{margin:0}.ic-record-history{margin-top:25px}.ic-record{padding:14px 0;border-top:1px solid #e2e9f1;display:grid;gap:4px;overflow-wrap:anywhere}.ic-record small{color:#62768e}.ic-record p{margin:0}@media(max-width:720px){.ic-data-form{grid-template-columns:1fr;padding:15px}}
+
+/* Mobile-first contractor portal / field collection */
+html,body{max-width:100%;overflow-x:hidden}
+@media(max-width:767px){
+ .app,.main,.content,.section,.panel,.hero{min-width:0!important;max-width:100%!important}
+ .main{width:100%!important;margin:0!important}
+ .content{padding:12px!important}
+ .hero{padding:16px!important;margin:0 0 12px!important}
+ .section .panel{padding:16px!important;border-radius:12px}
+ .ic-flow{margin-top:16px}
+ .ic-flow-steps{grid-template-columns:minmax(0,1fr)!important;gap:12px}
+ .ic-flow-step{min-width:0;padding:16px}
+ .ic-flow-step button,.ic-data-form button,.ic-flow select,.ic-flow input,.ic-flow textarea,.ic-data-field input,.ic-data-field select,.ic-data-field textarea{font-size:16px!important;min-height:48px!important;width:100%!important;max-width:100%;touch-action:manipulation}
+ .ic-flow-step input[type=file]{padding:12px 8px;overflow:hidden}
+ .ic-flow-site{padding:14px;overflow-wrap:anywhere}
+ .ic-flow-warning{padding:14px}
+ .ic-data-form{grid-template-columns:minmax(0,1fr)!important;padding:14px!important;gap:12px}
+ .ic-data-field{min-width:0}
+ .table-wrap{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+ .table-wrap table{min-width:560px}
+ .nav a,.mobile-nav a,.mobile-nav-links a,.top button,.menu{min-height:44px;touch-action:manipulation}
+}
+@media(max-width:380px){.ic-flow-step{padding:12px}.hero h1{font-size:24px!important}.top{gap:6px!important}}
