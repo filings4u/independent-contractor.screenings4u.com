@@ -65,13 +65,23 @@ if(body.action==="respond_assignment"){
  }
  return reply({ok:true,assignment:updated.data});
 }
-if(["progress_view","progress_save","progress_upload_url","progress_attach"].includes(String(body.action||""))){
+if(["start_work_order","progress_view","progress_save","progress_upload_url","progress_attach"].includes(String(body.action||""))){
  const aid=String(body.assignment_id||"");if(!/^[0-9a-f-]{36}$/i.test(aid)||!ids.length)return reply({error:"Assignment unavailable"},403);
  const a=await db.from("testing_work_order_assignments").select("id,status,work_order_id,collector_id").eq("id",aid).in("collector_id",ids).maybeSingle();
  if(a.error)throw a.error;if(!a.data)return reply({error:"Assignment unavailable"},403);
  const existing=await db.from("ic_assignment_progress").select("details").eq("assignment_id",aid).eq("user_id",user.id).maybeSingle();
  if(existing.error)throw existing.error;const previous=existing.data?.details||{};
  if(body.action==="progress_view")return reply({progress:previous,assignment_status:a.data.status});
+ if(body.action==="start_work_order"){
+  if(a.data.status!=="awarded")return reply({error:"Work order has not been awarded"},409);
+  const order=await db.from("testing_work_orders").select("assigned_collector_id,status").eq("id",a.data.work_order_id).maybeSingle();if(order.error)throw order.error;if(!order.data||order.data.assigned_collector_id!==a.data.collector_id)return reply({error:"Work order not awarded to you"},403);
+  const docs=await db.from("ic_portal_documents").select("document_type,status,expires_on").eq("contractor_user_id",user.id).in("status",["verified","approved"]).limit(100);if(docs.error)throw docs.error;
+  const today=new Date().toISOString().slice(0,10);if(!(docs.data||[]).some((d:any)=>/professional.?liability/i.test(d.document_type||"")&&d.expires_on&&d.expires_on>=today))return reply({error:"Valid Professional Liability insurance is required before starting"},409);
+  const now=new Date().toISOString(),next={...previous,started_at:previous.started_at||now,updated_at:now};
+  const up=await db.from("ic_assignment_progress").upsert({assignment_id:aid,user_id:user.id,details:next,updated_at:now},{onConflict:"assignment_id"});if(up.error)throw up.error;
+  const w=await db.from("testing_work_orders").update({status:"in_progress"}).eq("id",a.data.work_order_id).eq("assigned_collector_id",a.data.collector_id).in("status",["scheduled","in_progress"]);if(w.error)throw w.error;
+  return reply({ok:true,progress:next});
+ }
  if(!["awarded","accepted"].includes(a.data.status))return reply({error:"This work order has not been awarded to you"},409);const parent=await db.from("testing_work_orders").select("assigned_collector_id").eq("id",a.data.work_order_id).single();if(parent.error)throw parent.error;if(parent.data.assigned_collector_id!==a.data.collector_id)return reply({error:"Management has not awarded this work order to you"},403);
  if(body.action==="progress_save"){
    const step=String(body.step||"");const allowed=["eta","arrival","pretest","incident","test_finished","departure","scan_confirmed","submit_review"];
