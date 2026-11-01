@@ -51,7 +51,7 @@ if(body.action==="respond_assignment"){
  if(decision==="accept"){
   if(response.supplies!==true||response.terms!==true||response.phone!==true||response.transport!==true||response.insurance_claimed!==true)return reply({error:"All acceptance confirmations are required"},400);
   const eta=String(response.eta||"");
-  if(!/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}/.test(eta)||!Number.isFinite(Date.parse(eta)))return reply({error:"Valid estimated arrival date and time required"},400);
+  if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(eta)||!Number.isFinite(Date.parse(eta)))return reply({error:"Valid estimated arrival date and time required"},400);
  }
  const now=new Date().toISOString(),next=decision==="accept"?"pending_admin_review":"declined";
  const update:any={status:next,responded_at:now,terms_accepted_at:decision==="accept"?now:null};
