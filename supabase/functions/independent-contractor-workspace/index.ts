@@ -9,6 +9,7 @@ try{const url=Deno.env.get("SUPABASE_URL")||"",pub=Deno.env.get("SUPABASE_ANON_K
 const token=(req.headers.get("authorization")||"").replace(/^Bearer\s+/i,"").trim();if(!token)return reply({error:"Authentication required"},401);
 const userClient=createClient(url,pub,{auth:{persistSession:false}}),db=createClient(url,secret,{auth:{persistSession:false}});
 const {data:{user},error}=await userClient.auth.getUser(token);if(error||!user?.email)return reply({error:"Authentication required"},401);
+if(String(user.email).trim().toLowerCase().endsWith("@screenings4u.com"))return reply({error:"Internal staff addresses cannot access the IC portal."},403);
 const granted=await db.from("account_type_assignments").select("id,ctpa_id,employer_id,account_types!inner(code)").eq("user_id",user.id).eq("status","active").is("archived_at",null).in("account_types.code",["dot_ctpa_contractor","dot_employer_contractor"]);if(granted.error)throw granted.error;
 let authorized=false;
 for(const grant of granted.data||[]){
