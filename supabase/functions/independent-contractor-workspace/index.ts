@@ -84,6 +84,7 @@ if(["start_work_order","progress_view","progress_save","progress_upload_url","pr
  }
  if(!["awarded","accepted"].includes(a.data.status))return reply({error:"This work order has not been awarded to you"},409);const parent=await db.from("testing_work_orders").select("assigned_collector_id").eq("id",a.data.work_order_id).single();if(parent.error)throw parent.error;if(parent.data.assigned_collector_id!==a.data.collector_id)return reply({error:"Management has not awarded this work order to you"},403);
  if(body.action==="progress_save"){
+   if(a.data.status==="awarded"&&!previous.started_at)return reply({error:"Start the approved work order before recording collection activity"},409);
    const step=String(body.step||"");const allowed=["eta","arrival","pretest","incident","test_finished","departure","scan_confirmed","submit_review"];
    if(!allowed.includes(step))return reply({error:"Invalid step"},400);
    const fields=body.values||{},next={...previous};const date=new Date().toISOString();
