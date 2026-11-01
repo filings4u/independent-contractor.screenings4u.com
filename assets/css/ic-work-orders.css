@@ -2,3 +2,5 @@
 .ic-flow-submitted{background:#eef8f1;border:1px solid #b9dfc5;border-radius:14px;padding:25px;color:#204c38}.ic-flow-submitted h3{color:#205a39;font-size:20px;margin:0 0 12px}.ic-flow-submitted p{line-height:1.65}.ic-flow-submitted a{display:inline-block;padding:12px 17px;border-radius:9px;background:#24538a;color:#fff;text-decoration:none;font-weight:750}.ic-flow-corrections{background:#fff6eb;border:1px solid #f0bd81;border-left:5px solid #ed7629;border-radius:12px;padding:20px;margin:16px 0;color:#6e3d12}.ic-flow-corrections h3{margin:0 0 10px;color:#a4521c}.ic-flow-corrections p{white-space:pre-wrap;line-height:1.65}.ic-flow-corrections small{color:#956532}
 
 .ic-flow-corrections label{display:block;margin:16px 0 8px;font-weight:800;color:#75411e}.ic-flow-corrections textarea{width:100%;min-height:100px;border:1px solid #e5b382;border-radius:9px;background:#fff;padding:13px;font:inherit;color:#254562}
+
+.ic-wo-newest{display:inline-flex;align-items:center;width:max-content;margin:0 0 7px;padding:4px 8px;border-radius:6px;background:#fff0e5;color:#a64a0b;font-size:10px;font-weight:850;letter-spacing:.045em}
