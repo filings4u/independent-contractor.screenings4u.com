@@ -18,6 +18,9 @@ for(const grant of granted.data||[]){
 }
 const ic=await db.from("ic_portal_access").select("enabled").eq("user_id",user.id).eq("enabled",true).maybeSingle();if(ic.error)throw ic.error;authorized=authorized||!!ic.data;
 if(!authorized)return reply({error:"Contractor access not assigned"},403);
+const approved=await db.from("collector_network_submissions").select("id").ilike("email",String(user.email).trim()).eq("status","approved").limit(1);if(approved.error)throw approved.error;
+if(!approved.data?.length)return reply({error:"Your IC application must be approved before portal access is available."},403);
+const blocked=await db.from("ic_application_denials").select("id").eq("email",String(user.email).trim().toLowerCase()).is("restored_at",null).limit(1);if(blocked.error)throw blocked.error;if(blocked.data?.length)return reply({error:"This application is denied. Contact management for restoration."},403);
 const schedules=await db.from("ic_compensation_schedules").select("id,status,rates,issued_at,accepted_at").eq("contractor_user_id",user.id).order("created_at",{ascending:false}).limit(20);if(schedules.error)throw schedules.error;
 const personalRates=await db.from("ic_contractor_rates").select("rate_code,amount,active").eq("contractor_user_id",user.id);if(personalRates.error)throw personalRates.error;const catalog=await db.from("ic_pricing_rates").select("code,label,currency,unit,sort_order").order("sort_order");if(catalog.error)throw catalog.error;const ownPricing=(catalog.data||[]).map((r:any)=>({...r,amount:(personalRates.data||[]).find((x:any)=>x.rate_code===r.code&&x.active)?.amount??null}));
 const body=await req.json().catch(()=>({}));const section=String(body.section||"dashboard");
