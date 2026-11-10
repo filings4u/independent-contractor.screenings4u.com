@@ -1,0 +1,2 @@
+# Redirect legacy login only. Keep authenticated pages and secure handoff local.
+/login.html https://workforceapps.screenings4u.com/ 302
