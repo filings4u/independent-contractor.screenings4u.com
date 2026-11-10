@@ -37,7 +37,12 @@ if(body.action==="submit"){
  if(Object.keys(details).some(k=>!allowedKeys.has(k)))return reply({error:"Unsupported submission field"},400);
  const inserted=await db.from("ic_contractor_records").insert({user_id:user.id,section,title,details,status:"submitted"}).select("id,section,title,details,status,created_at").single();
  if(inserted.error)throw inserted.error;
- return reply({ok:true,record:inserted.data});
+ const ref=String(inserted.data.id).slice(0,8).toUpperCase();
+ const adminEmail=Deno.env.get("SCREENINGS4U_ADMIN_EMAIL")||"";
+ const customerNotice=await brandedEmail([user.email],"Workforce | Request received — "+ref,"Your Independent Contractor request was received. Reference "+ref+". Your submission is pending management review.");
+ const adminNotice=adminEmail?await brandedEmail([adminEmail],"New Independent Contractor request — "+ref,"A contractor submitted "+title+". Open Workforce Management to review the request. Reference "+ref+"."):"no_admin_configured";
+ if(customerNotice!=="sent"||adminNotice!=="sent")console.error("IC request notification status",{ref,customerNotice,adminNotice});
+ return reply({ok:true,record:inserted.data,notification_status:{customer:customerNotice,admin:adminNotice}});
 }
 const agreementRecord=await db.from("ic_agreement_submissions").select("id,tracking_number,status,agreement_version,created_at,accepted_at,agreement_url,shirt_size,mens_shirt_size").eq("email",user.email).order("created_at",{ascending:false}).limit(1);if(agreementRecord.error)throw agreementRecord.error;
 const ownRecords=await db.from("ic_contractor_records").select("id,section,title,details,status,created_at").eq("user_id",user.id).eq("section",section).order("created_at",{ascending:false}).limit(100);
